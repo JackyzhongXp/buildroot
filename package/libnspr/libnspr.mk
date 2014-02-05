@@ -50,3 +50,4 @@ LIBNSPR_INSTALL_STAGING_OPTS = DESTDIR=$(STAGING_DIR) LIBRARY= install
 endif
 
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))
