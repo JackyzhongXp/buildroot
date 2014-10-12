@@ -208,10 +208,27 @@ $(BUILD_DIR)/%/.stamp_target_installed:
 	@$(call MESSAGE,"Installing to target")
 	$(foreach hook,$($(PKG)_PRE_INSTALL_TARGET_HOOKS),$(call $(hook))$(sep))
 	+$($(PKG)_INSTALL_TARGET_CMDS)
-	$(if $(BR2_INIT_SYSTEMD),\
-		$($(PKG)_INSTALL_INIT_SYSTEMD))
-	$(if $(BR2_INIT_SYSV)$(BR2_INIT_BUSYBOX),\
-		$($(PKG)_INSTALL_INIT_SYSV))
+ifeq ($(BR2_INIT_SYSTEMD),y)
+	$(Q)if test -n "$($(PKG)_INIT_SYSTEMD_FILES)" ; then \
+		mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants ; \
+		for s in $($(PKG)_INIT_SYSTEMD_FILES); do \
+			f=$$(basename $${s}); \
+			$(INSTALL) -D -m 644 $${s} $(TARGET_DIR)/lib/systemd/system/$${f} || exit 1 ; \
+			ln -fs /lib/systemd/system/$${f} \
+				$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/$${f} || exit 1 ; \
+		done ; \
+	fi
+	$($(PKG)_INSTALL_INIT_SYSTEMD)
+endif
+ifeq ($(BR2_INIT_SYSV)$(BR2_INIT_BUSYBOX),y)
+	$(Q)if test -n "$($(PKG)_INIT_SYSV_FILES)" ; then \
+		for s in $($(PKG)_INIT_SYSV_FILES); do \
+			   f=$$(basename $${s}) ; \
+			   $(INSTALL) -D -m 0755 $${s} $(TARGET_DIR)/etc/init.d/$${f} || exit 1 ; \
+		done ; \
+	fi
+	$($(PKG)_INSTALL_INIT_SYSV)
+endif
 	$(foreach hook,$($(PKG)_POST_INSTALL_TARGET_HOOKS),$(call $(hook))$(sep))
 	$(Q)if test -n "$($(PKG)_CONFIG_SCRIPTS)" ; then \
 		$(RM) -f $(addprefix $(TARGET_DIR)/usr/bin/,$($(PKG)_CONFIG_SCRIPTS)) ; \
@@ -622,6 +639,7 @@ $(1)-reconfigure:	$(1)-clean-for-reconfigure $(1)
 # define the PKG variable for all targets, containing the
 # uppercase package variable prefix
 $$($(2)_TARGET_INSTALL_TARGET):		PKG=$(2)
+$$($(2)_TARGET_INSTALL_TARGET):		PKGDIR=$(pkgdir)
 $$($(2)_TARGET_INSTALL_STAGING):	PKG=$(2)
 $$($(2)_TARGET_INSTALL_IMAGES):		PKG=$(2)
 $$($(2)_TARGET_INSTALL_HOST):           PKG=$(2)

@@ -397,6 +397,23 @@ information is (assuming the package name is +libfoo+) :
   FLAT binary format is only 4k bytes. If the application consumes more stack,
   append the required number here.
 
+* +LIBFOO_INIT_SYSV_FILES+ and +LIBFOO_INIT_SYSTEMD_FILES+ are
+  a space-separated list of init scripts path. Respectively, for
+  the systemV-like init systems (busybox, sysvinit, etc.) and for
+  systemd.
+  Theses init scripts files will only be installed when the relevant
+  init system is installed (i.e. if systemd is selected as the init
+  system in the configuration, only +LIBFOO_INIT_SYSTEMD_FILES+ will be
+  installed).
+  Each scripts will be installed in the default folder of the relevant
+  init system.
+  Note: This doesn't forbid you from defining +LIBFOO_INSTALL_INIT_SYSV+ and
+  +LIBFOO_INSTALL_INIT_SYSTEMD+ if you need to perform specific actions.
+  Theses variables are optionnal.
+  Examples: +
+    +LIBFOO_INSTALL_INIT_SYSV=package/libfoo/S99libfoo +
+    +LIBFOO_INSTALL_INIT_SYSV=$(@D)/S99libfoo +
+
 The recommended way to define these variables is to use the following
 syntax:
 
