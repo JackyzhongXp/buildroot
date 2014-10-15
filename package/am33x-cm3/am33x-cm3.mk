@@ -10,6 +10,7 @@ AM33X_CM3_SITE = http://arago-project.org/git/projects/am33x-cm3.git
 AM33X_CM3_SITE_METHOD = git
 AM33X_CM3_LICENSE = TI Publicly Available Software License
 AM33X_CM3_LICENSE_FILES = License.txt
+AM33X_CM3_INIT_SYSV_FILES = package/am33x-cm3/S93-am335x-pm-firmware-load
 
 # The build command below will use the standard cross-compiler (normally
 # build for Cortex-A8, to build the FW for the Cortex-M3.
@@ -21,11 +22,6 @@ endef
 define AM33X_CM3_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 0644 -D $(@D)/bin/am335x-pm-firmware.bin \
 		$(TARGET_DIR)/lib/firmware/am335x-pm-firmware.bin
-endef
-
-define AM33X_CM3_INSTALL_INIT_SYSV
-	$(INSTALL) -m 0755 -D package/am33x-cm3/S93-am335x-pm-firmware-load \
-		$(TARGET_DIR)/etc/init.d/S93-am335x-pm-firmware-load
 endef
 
 $(eval $(generic-package))
