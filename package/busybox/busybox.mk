@@ -126,6 +126,15 @@ define BUSYBOX_INTERNAL_SHADOW_PASSWORDS
 endef
 endif
 
+define BUSYBOX_INSTALL_NTP_SCRIPT
+	if grep -q CONFIG_NTPD=y $(@D)/.config; then \
+		$(INSTALL) -m 0755 -D package/busybox/S49ntp \
+			$(TARGET_DIR)/etc/init.d/S49ntp; \
+		$(INSTALL) -m 0755 -D package/busybox/ntpd.etc.conf \
+			$(TARGET_DIR)/etc/ntp.conf; \
+	fi
+endef
+
 define BUSYBOX_INSTALL_UDHCPC_SCRIPT
 	if grep -q CONFIG_UDHCPC=y $(@D)/.config; then \
 		$(INSTALL) -m 0755 -D package/busybox/udhcpc.script \
@@ -204,6 +213,7 @@ endef
 define BUSYBOX_INSTALL_TARGET_CMDS
 	$(BUSYBOX_MAKE_ENV) $(MAKE) $(BUSYBOX_MAKE_OPTS) -C $(@D) install
 	$(BUSYBOX_INSTALL_INITTAB)
+	$(BUSYBOX_INSTALL_NTP_SCRIPT)
 	$(BUSYBOX_INSTALL_UDHCPC_SCRIPT)
 	$(BUSYBOX_INSTALL_MDEV_CONF)
 endef
