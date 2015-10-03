@@ -50,7 +50,7 @@ LINUX_NEEDS_MODULES = y
 endif
 
 # The kernel must be built first.
-$(2)_DEPENDENCIES += linux
+$(2)_INFRA_EXTRA_DEPENDENCIES += linux
 
 # This is only defined in some infrastructures (e.g. autotools, cmake),
 # but not in others (e.g. generic). So define it here as well.

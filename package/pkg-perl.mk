@@ -44,9 +44,9 @@ define inner-perl-package
 # compilation). However, host packages only need the perl
 # interpreter on the host.
 ifeq ($(4),target)
-$(2)_DEPENDENCIES += host-perl perl
+$(2)_INFRA_EXTRA_DEPENDENCIES += host-perl perl
 else
-$(2)_DEPENDENCIES += host-perl
+$(2)_INFRA_EXTRA_DEPENDENCIES += host-perl
 endif
 
 #
