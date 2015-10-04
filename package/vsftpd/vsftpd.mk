@@ -47,6 +47,23 @@ define VSFTPD_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 755 package/vsftpd/S70vsftpd $(TARGET_DIR)/etc/init.d/S70vsftpd
 endef
 
+define VSFTPD_INSTALL_INIT_SYSTEMD
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/sockets.target.wants
+
+	for f in vsftpd.service vsftpd.socket vsftpd@.service \
+		vsftpd-ssl.service vsftpd-ssl.socket vsftpd-ssl@.service; do \
+		$(INSTALL) -D -m 644 package/vsftpd/$$f \
+			$(TARGET_DIR)/usr/lib/systemd/system/$$f; \
+		wanted_by="multi-user.target.wants"; \
+		if [ $${f##*.} = "socket" ]; then \
+			wanted_by="sockets.target.wants"; \
+		fi; \
+		ln -sf ../../../../usr/lib/systemd/system/$$f \
+			$(TARGET_DIR)/etc/systemd/system/$$wanted_by/$$f; \
+	done
+endef
+
 define VSFTPD_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 755 $(@D)/vsftpd $(TARGET_DIR)/usr/sbin/vsftpd
 	test -f $(TARGET_DIR)/etc/vsftpd.conf || \
