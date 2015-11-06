@@ -1,0 +1,7 @@
+config BR2_PACKAGE_QT_EVENTDISPATCHER_LIBEVENT
+	bool "qt_eventdispatcher_libevent"
+	select BR2_PACKAGE_LIBEVENT
+	help
+	  libevent-based event dispatcher for Qt
+
+	  https://github.com/sjinks/qt_eventdispatcher_libevent

@@ -1,0 +1,26 @@
+From d9d861e4685d9822cafb68e512b57d1e43403f82 Mon Sep 17 00:00:00 2001
+From: Maxime Hadjinlian <maxime.hadjinlian@gmail.com>
+Date: Wed, 18 Nov 2015 19:51:00 +0100
+Subject: [PATCH] build.pro: Remove tests
+
+The tests are in a git submodules which we won't clone, so don't try to
+build them.
+---
+ build.pro | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/build.pro b/build.pro
+index f5f0400..685617f 100644
+--- a/build.pro
++++ b/build.pro
+@@ -1,7 +1,6 @@
+ TEMPLATE = subdirs
+ CONFIG  += ordered
+
+-SUBDIRS = src tests
++SUBDIRS = src
+
+ src.file   = src/eventdispatcher_libevent.pro
+-tests.file = tests/qt_eventdispatcher_tests/build.pro
+--
+2.6.2
