@@ -1,0 +1,8 @@
+config BR2_PACKAGE_LEAKTRACER
+	bool "leaktracer"
+	help
+	  LeakTracer is a small tool written to check a C++ program for memory
+	  leaks. Ideal if valgrind is not ported to your platform or if you
+	  can't use libduma.
+
+	  https://github.com/fredericgermain/LeakTracer
