@@ -1,0 +1,40 @@
+From: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
+
+Do not force an ARM variant.
+
+Buildroot already passes the correct CFLAGS.
+
+Signed-off-by: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
+
+--- spidermonkey185-1.0.0/js/src/configure.in	2016-05-23 17:10:59.166657848 +0200
++++ spidermonkey185-1.0.0/js/src/configure.in	2016-05-23 17:11:21.987444482 +0200
+@@ -4654,12 +4654,6 @@
+ dnl ========================================================
+ MOZ_ARG_HEADER(Individual module options)
+
+-dnl Setup default CPU arch for arm target
+-case "$target_cpu" in
+-  arm*)
+-    MOZ_ARM_ARCH=armv7
+-  ;;
+-esac
+ dnl ========================================================
+ dnl = Enable building the Thumb2 instruction set
+ dnl ========================================================
+@@ -4714,16 +4708,6 @@
+       AC_MSG_ERROR([--with-cpu-arch=armv7 is not supported for non-ARM CPU architectures])
+     ;;
+   esac
+-else
+-  case "$target_cpu" in
+-    arm*)
+-      if test "$GNU_CC"; then
+-        CFLAGS="$CFLAGS -march=armv5te -mthumb-interwork -msoft-float"
+-        CXXFLAGS="$CXXFLAGS -march=armv5te -mthumb-interwork -msoft-float"
+-        ASFLAGS="$ASFLAGS -march=armv5te -mthumb-interwork -msoft-float"
+-      fi
+-      ;;
+-  esac
+ fi
+
+ AC_SUBST(MOZ_THUMB2)

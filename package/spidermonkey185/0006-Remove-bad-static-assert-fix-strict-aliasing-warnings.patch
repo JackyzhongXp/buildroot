@@ -1,0 +1,92 @@
+
+# HG changeset patch
+# User Luke Wagner <luke@mozilla.com>
+# Date 1312825636 25200
+# Node ID 6f2c0dbb88d338df44a624041f8808c9de0a9a9b
+# Parent  e605ebcd59845fca46a52555eb1b18e70bb3a37d
+Bug 674522 - Remove bad static assert; fix strict-aliasing warnings (rs=waldo)
+
+[nicolas.cavallari@green-communications.fr: refresh patch]
+
+diff --git a/js/src/jsval.h b/js/src/jsval.h
+--- a/js/src/jsval.h
++++ b/js/src/jsval.h
+@@ -305,16 +305,17 @@ typedef union jsval_layout
+         union {
+             int32          i32;
+             uint32         u32;
+             JSWhyMagic     why;
+         } payload;
+     } s;
+     double asDouble;
+     void *asPtr;
++    jsuword asWord;
+ } jsval_layout;
+ # endif  /* JS_BITS_PER_WORD */
+ #else   /* defined(IS_LITTLE_ENDIAN) */
+ # if JS_BITS_PER_WORD == 32
+ typedef union jsval_layout
+ {
+     uint64 asBits;
+     struct {
+@@ -346,16 +347,17 @@ typedef union jsval_layout
+         union {
+             int32          i32;
+             uint32         u32;
+             JSWhyMagic     why;
+         } payload;
+     } s;
+     double asDouble;
+     void *asPtr;
++    jsuword asWord;
+ } jsval_layout;
+ # endif /* JS_BITS_PER_WORD */
+ #endif  /* defined(IS_LITTLE_ENDIAN) */
+
+ JS_STATIC_ASSERT(sizeof(jsval_layout) == 8);
+
+ #if JS_BITS_PER_WORD == 32
+
+diff --git a/js/src/jsvalue.h b/js/src/jsvalue.h
+--- a/js/src/jsvalue.h
++++ b/js/src/jsvalue.h
+@@ -286,17 +286,16 @@ static JS_ALWAYS_INLINE JSValueTag
+ JSVAL_EXTRACT_NON_DOUBLE_TAG_IMPL(jsval_layout l)
+ {
+     uint64 tag = l.asBits >> JSVAL_TAG_SHIFT;
+     JS_ASSERT(tag > JSVAL_TAG_MAX_DOUBLE);
+     return (JSValueTag)tag;
+ }
+
+ #ifdef __cplusplus
+-JS_STATIC_ASSERT(offsetof(jsval_layout, s.payload) == 0);
+ JS_STATIC_ASSERT((JSVAL_TYPE_NONFUNOBJ & 0xF) == JSVAL_TYPE_OBJECT);
+ JS_STATIC_ASSERT((JSVAL_TYPE_FUNOBJ & 0xF) == JSVAL_TYPE_OBJECT);
+ #endif
+
+ static JS_ALWAYS_INLINE jsval_layout
+ BOX_NON_DOUBLE_JSVAL(JSValueType type, uint64 *slot)
+ {
+     /* N.B. for 32-bit payloads, the high 32 bits of the slot are trash. */
+@@ -725,19 +724,19 @@ class Value
+
+     JS_ALWAYS_INLINE
+     void *toUnmarkedPtr() const {
+         return data.asPtr;
+     }
+
+     const jsuword *payloadWord() const {
+ #if JS_BITS_PER_WORD == 32
+-        return reinterpret_cast<const jsuword *>(&data.s.payload.word);
++        return &data.s.payload.word;
+ #elif JS_BITS_PER_WORD == 64
+-        return reinterpret_cast<const jsuword *>(&data.asBits);
++        return &data.asWord;
+ #endif
+     }
+
+   private:
+     void staticAssertions() {
+         JS_STATIC_ASSERT(sizeof(JSValueType) == 1);
+         JS_STATIC_ASSERT(sizeof(JSValueTag) == 4);
+         JS_STATIC_ASSERT(sizeof(JSBool) == 4);
