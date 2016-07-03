@@ -21,4 +21,15 @@ define DMRAID_INSTALL_INIT_SYSV
 		$(TARGET_DIR)/etc/init.d/S20dmraid
 endef
 
+define DMRAID_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 644 package/dmraid/dmraid.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/dmraid.service
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
+	ln -fs ../../../../usr/lib/systemd/system/dmraid.service \
+		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/dmraid.service
+
+	$(INSTALL) -D -m 644 package/dmraid/dmraid_tmpfiles.conf \
+		$(TARGET_DIR)/usr/lib/tmpfiles.d/dmraid.conf
+endef
+
 $(eval $(autotools-package))
