@@ -1,8 +1,8 @@
 import telnetlib
 import subprocess
 import socket
-import core.basetest
-import core.common
+import infra.basetest
+import infra.common
 import sys
 
 class System:
@@ -41,14 +41,14 @@ class System:
             machine = None
             if kernel == "builtin":
                 if arch == "armv7":
-                    kernel = core.common.download(self.downloaddir, "kernel-vexpress")
-                    dtb = core.common.download(self.downloaddir, "vexpress-v2p-ca9.dtb")
+                    kernel = infra.common.download(self.downloaddir, "kernel-vexpress")
+                    dtb = infra.common.download(self.downloaddir, "vexpress-v2p-ca9.dtb")
                     machine = "vexpress-a9"
                     kappend.append("console=ttyAMA0")
                     qemu_args += [ "-dtb", dtb ]
                     qemu_arch = "arm"
                 elif arch == "armv5":
-                    kernel = core.common.download(self.downloaddir, "kernel-versatile")
+                    kernel = infra.common.download(self.downloaddir, "kernel-versatile")
                     machine = "versatilepb"
                     kappend.append("console=ttyAMA0")
                     qemu_arch = "arm"

@@ -1,9 +1,9 @@
-import core.basetest
+import infra.basetest
 import subprocess
 import os
 
-class TestYaffs2(core.basetest.BRTest):
-    config = core.basetest.basic_toolchain_config + core.basetest.minimal_config + """
+class TestYaffs2(infra.basetest.BRTest):
+    config = infra.basetest.basic_toolchain_config + infra.basetest.minimal_config + """
 BR2_TARGET_ROOTFS_YAFFS2=y
 """
 

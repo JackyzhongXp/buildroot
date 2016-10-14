@@ -1,9 +1,9 @@
-import core.basetest
+import infra.basetest
 import subprocess
 import os
 
-class TestUbi(core.basetest.BRTest):
-    config = core.basetest.basic_toolchain_config + """
+class TestUbi(infra.basetest.BRTest):
+    config = infra.basetest.basic_toolchain_config + """
 BR2_TARGET_ROOTFS_UBIFS=y
 BR2_TARGET_ROOTFS_UBIFS_LEBSIZE=0x7ff80
 BR2_TARGET_ROOTFS_UBIFS_MINIOSIZE=0x1

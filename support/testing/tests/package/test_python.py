@@ -1,9 +1,9 @@
-import core.basetest
+import infra.basetest
 import subprocess
 import os
 
-class TestPythonBase(core.basetest.BRTest):
-    config = core.basetest.basic_toolchain_config + """
+class TestPythonBase(infra.basetest.BRTest):
+    config = infra.basetest.basic_toolchain_config + """
 BR2_PACKAGE_PYTHON=y
 BR2_TARGET_ROOTFS_CPIO=y
 # BR2_TARGET_ROOTFS_TAR is not set

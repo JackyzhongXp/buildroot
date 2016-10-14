@@ -5,7 +5,7 @@ import argparse
 import sys
 import os
 import string
-from core.basetest import BRTest
+from infra.basetest import BRTest
 
 parser = argparse.ArgumentParser(description='Run Buildroot tests')
 parser.add_argument('testname', nargs='*',

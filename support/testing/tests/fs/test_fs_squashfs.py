@@ -1,9 +1,9 @@
-import core.basetest
+import infra.basetest
 import subprocess
 import os
 
-class TestSquashfs(core.basetest.BRTest):
-    config = core.basetest.basic_toolchain_config + """
+class TestSquashfs(infra.basetest.BRTest):
+    config = infra.basetest.basic_toolchain_config + """
 BR2_TARGET_ROOTFS_SQUASHFS=y
 # BR2_TARGET_ROOTFS_SQUASHFS4_GZIP is not set
 BR2_TARGET_ROOTFS_SQUASHFS4_LZ4=y

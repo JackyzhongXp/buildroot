@@ -1,4 +1,4 @@
-import core.basetest
+import infra.basetest
 import subprocess
 import os
 
@@ -9,8 +9,8 @@ def jffs2dump_find_file(flist, fname):
             return True
     return False
 
-class TestJffs2(core.basetest.BRTest):
-    config = core.basetest.basic_toolchain_config + """
+class TestJffs2(infra.basetest.BRTest):
+    config = infra.basetest.basic_toolchain_config + """
 BR2_TARGET_ROOTFS_JFFS2=y
 BR2_TARGET_ROOTFS_JFFS2_CUSTOM=y
 BR2_TARGET_ROOTFS_JFFS2_CUSTOM_EBSIZE=0x80000

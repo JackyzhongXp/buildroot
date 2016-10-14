@@ -1,9 +1,9 @@
 import subprocess
 import os
-import core.basetest
+import infra.basetest
 
-class TestDropbear(core.basetest.BRTest):
-    config = core.basetest.basic_toolchain_config + """
+class TestDropbear(infra.basetest.BRTest):
+    config = infra.basetest.basic_toolchain_config + """
 BR2_TARGET_GENERIC_ROOT_PASSWD="root"
 BR2_SYSTEM_DHCP="eth0"
 BR2_PACKAGE_DROPBEAR=y

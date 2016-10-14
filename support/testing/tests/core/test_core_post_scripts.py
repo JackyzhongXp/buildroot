@@ -1,17 +1,17 @@
-import core.basetest
+import infra.basetest
 import subprocess
 import os
 
-class TestPostScripts(core.basetest.BRTest):
-    config = core.basetest.basic_toolchain_config + """
+class TestPostScripts(infra.basetest.BRTest):
+    config = infra.basetest.basic_toolchain_config + """
 BR2_INIT_NONE=y
 BR2_SYSTEM_BIN_SH_NONE=y
 # BR2_PACKAGE_BUSYBOX is not set
 BR2_ROOTFS_POST_BUILD_SCRIPT="%s"
 BR2_ROOTFS_POST_IMAGE_SCRIPT="%s"
 BR2_ROOTFS_POST_SCRIPT_ARGS="foobar baz"
-""" % (core.basetest.filePath("tests/core/post-build.sh"),
-       core.basetest.filePath("tests/core/post-image.sh"))
+""" % (infra.basetest.filePath("tests/infra.post-build.sh"),
+       infra.basetest.filePath("tests/infra.post-image.sh"))
 
     def check_post_log_file(self,path):
         f = open(path, "r")

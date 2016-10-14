@@ -1,8 +1,8 @@
-import core.basetest
+import infra.basetest
 import subprocess
 import os
 
-class TestExternalToolchain(core.basetest.BRTest):
+class TestExternalToolchain(infra.basetest.BRTest):
     def get_file_arch(self, prefix, fpath):
         out = subprocess.check_output(["host/usr/bin/%s-readelf" % prefix,
                                        "-A", os.path.join("target", fpath)],

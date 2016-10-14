@@ -3,8 +3,8 @@ import os
 import subprocess
 import datetime
 
-from builder import Builder
-from system import System
+from infra.builder import Builder
+from infra.system import System
 
 basic_toolchain_config = """
 BR2_arm=y

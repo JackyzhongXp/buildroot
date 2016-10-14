@@ -1,4 +1,4 @@
-import core.basetest
+import infra.basetest
 import subprocess
 import os
 
@@ -23,8 +23,8 @@ BLOCKCNT_PROP = "Block count"
 INODECNT_PROP = "Inode count"
 RESBLKCNT_PROP = "Reserved block count"
 
-class TestExt2(core.basetest.BRTest):
-    config = core.basetest.basic_toolchain_config + """
+class TestExt2(infra.basetest.BRTest):
+    config = infra.basetest.basic_toolchain_config + """
 BR2_TARGET_ROOTFS_EXT2=y
 BR2_TARGET_ROOTFS_EXT2_2r0=y
 BR2_TARGET_ROOTFS_EXT2_LABEL="foobaz"
@@ -45,8 +45,8 @@ BR2_TARGET_ROOTFS_EXT2_LABEL="foobaz"
         (r, s) = self.s.run("mount | grep '/dev/root on / type ext2'")
         self.assertEqual(s, 0)
 
-class TestExt2r1(core.basetest.BRTest):
-    config = core.basetest.basic_toolchain_config + """
+class TestExt2r1(infra.basetest.BRTest):
+    config = infra.basetest.basic_toolchain_config + """
 BR2_TARGET_ROOTFS_EXT2=y
 BR2_TARGET_ROOTFS_EXT2_2r1=y
 BR2_TARGET_ROOTFS_EXT2_LABEL="foobar"
@@ -69,8 +69,8 @@ BR2_TARGET_ROOTFS_EXT2_LABEL="foobar"
         (r, s) = self.s.run("mount | grep '/dev/root on / type ext2'")
         self.assertEqual(s, 0)
 
-class TestExt3(core.basetest.BRTest):
-    config = core.basetest.basic_toolchain_config + """
+class TestExt3(infra.basetest.BRTest):
+    config = infra.basetest.basic_toolchain_config + """
 BR2_TARGET_ROOTFS_EXT2=y
 BR2_TARGET_ROOTFS_EXT2_3=y
 # BR2_TARGET_ROOTFS_TAR is not set
@@ -90,8 +90,8 @@ BR2_TARGET_ROOTFS_EXT2_3=y
         (r, s) = self.s.run("mount | grep '/dev/root on / type ext3'")
         self.assertEqual(s, 0)
 
-class TestExt4(core.basetest.BRTest):
-    config = core.basetest.basic_toolchain_config + """
+class TestExt4(infra.basetest.BRTest):
+    config = infra.basetest.basic_toolchain_config + """
 BR2_TARGET_ROOTFS_EXT2=y
 BR2_TARGET_ROOTFS_EXT2_4=y
 BR2_TARGET_ROOTFS_EXT2_BLOCKS=16384
