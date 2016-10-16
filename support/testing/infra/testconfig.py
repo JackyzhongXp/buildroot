@@ -1,4 +1,0 @@
-
-class TestConfig():
-    outputdir = ""
-

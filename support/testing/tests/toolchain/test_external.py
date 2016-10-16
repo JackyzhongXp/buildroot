@@ -1,23 +1,10 @@
-import infra.basetest
-import subprocess
 import os
 
-class TestExternalToolchain(infra.basetest.BRTest):
-    def get_file_arch(self, prefix, fpath):
-        out = subprocess.check_output(["host/usr/bin/%s-readelf" % prefix,
-                                       "-A", os.path.join("target", fpath)],
-                                      cwd = self.builddir,
-                                      env = {"LANG" : "C" })
-        out = out.splitlines()
-        for l in out:
-            l = l.strip()
-            if not l.startswith("Tag_CPU_arch:"):
-                continue
-            return l.split(":")[1].strip()
-        return None
+import infra
 
-class TestExternalToolchainSourceryArmv4(TestExternalToolchain):
-    config = """
+class TestExternalToolchainSourceryArmv4(infra.basetest.BRTest):
+    config = \
+"""
 BR2_arm=y
 BR2_arm920t=y
 BR2_TOOLCHAIN_EXTERNAL=y
@@ -27,9 +14,11 @@ BR2_TARGET_ROOTFS_CPIO=y
 """
 
     def test_run(self):
-        arch = self.get_file_arch("arm-none-linux-gnueabi", "lib/libc.so.6")
+        arch = infra.get_file_arch(self.builddir,
+                                   "arm-none-linux-gnueabi", "lib/libc.so.6")
         self.assertEqual(arch, "v4T")
         img = os.path.join(self.builddir, "images", "rootfs.cpio")
-        self.s.boot(arch="armv5", kernel="builtin",
-                    options=["-initrd", img])
-        self.s.login("root")
+        self.emulator.boot(arch="armv5",
+                           kernel="builtin",
+                           options=["-initrd", img])
+        self.emulator.login("root")

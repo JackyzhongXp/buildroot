@@ -1,12 +1,12 @@
 import unittest
 import os
-import subprocess
 import datetime
 
 from infra.builder import Builder
-from infra.system import System
+from infra.emulator import Emulator
 
-basic_toolchain_config = """
+BASIC_TOOLCHAIN_CONFIG = \
+"""
 BR2_arm=y
 BR2_TOOLCHAIN_EXTERNAL=y
 BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
@@ -20,22 +20,21 @@ BR2_TOOLCHAIN_EXTERNAL_INET_RPC=y
 BR2_TOOLCHAIN_EXTERNAL_CXX=y
 """
 
-minimal_config = """
+MINIMAL_CONFIG = \
+"""
 BR2_INIT_NONE=y
 BR2_SYSTEM_BIN_SH_NONE=y
 # BR2_PACKAGE_BUSYBOX is not set
 # BR2_TARGET_ROOTFS_TAR is not set
 """
 
-def filePath(relpath):
-    return os.path.join(os.getcwd(), "support/testing", relpath)
-
 class BRTest(unittest.TestCase):
-    outputdir = None
+    config = None
     downloaddir = None
+    outputdir = None
     logtofile = True
 
-    def showMsg(self, msg):
+    def show_msg(self, msg):
         print "[%s/%s/%s] %s" % (os.path.basename(self.__class__.outputdir),
                                  self.testname,
                                  datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -45,18 +44,18 @@ class BRTest(unittest.TestCase):
         self.builddir = os.path.join(self.__class__.outputdir, self.testname)
         skip_build = os.path.exists(self.builddir)
         self.runlog = self.builddir + "-run.log"
-        self.s = None
-        self.showMsg("Starting")
+        self.emulator = None
+        self.show_msg("Starting")
         self.b = Builder(self.__class__.config, self.builddir, self.logtofile)
         if not skip_build:
-            self.showMsg("Building")
+            self.show_msg("Building")
             self.b.build()
-            self.showMsg("Building done")
-        self.s = System(self.builddir, self.downloaddir, self.logtofile)
+            self.show_msg("Building done")
+        self.emulator = Emulator(self.builddir, self.downloaddir, self.logtofile)
 
     def tearDown(self):
-        self.showMsg("Cleaning up")
-        if self.s:
-            self.s.stop()
-        if self.b and not os.getenv("KEEP_BUILD"):
+        self.show_msg("Cleaning up")
+        if self.emulator:
+            self.emulator.stop()
+        if self.b and not os.getenv("BR2_TEST_KEEP_BUILD_DIR"):
             self.b.delete()

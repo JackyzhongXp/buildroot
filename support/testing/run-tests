@@ -1,68 +1,73 @@
 #!/usr/bin/env python
-import nose2
-import tempfile
 import argparse
 import sys
 import os
 import string
+
+import nose2
+
 from infra.basetest import BRTest
 
-parser = argparse.ArgumentParser(description='Run Buildroot tests')
-parser.add_argument('testname', nargs='*',
-                    help='list of test cases to execute')
-parser.add_argument('--list', '-l', action='store_true',
-                    help='list of available test cases')
-parser.add_argument('--all', '-a', action='store_true',
-                    help='execute all test cases')
-parser.add_argument('--stdout', '-s', action='store_true',
-                    help='log everything to stdout')
-parser.add_argument('--output', '-o',
-                    help='output directory')
-parser.add_argument('--download', '-d',
-                    help='download directory')
+def main():
+    parser = argparse.ArgumentParser(description='Run Buildroot tests')
+    parser.add_argument('testname', nargs='*',
+                        help='list of test cases to execute')
+    parser.add_argument('--list', '-l', action='store_true',
+                        help='list of available test cases')
+    parser.add_argument('--all', '-a', action='store_true',
+                        help='execute all test cases')
+    parser.add_argument('--stdout', '-s', action='store_true',
+                        help='log everything to stdout')
+    parser.add_argument('--output', '-o',
+                        help='output directory')
+    parser.add_argument('--download', '-d',
+                        help='download directory')
 
-args = parser.parse_args()
+    args = parser.parse_args()
 
-if args.stdout:
-    BRTest.logtofile = False
+    script_path = os.path.realpath(__file__)
+    test_dir = os.path.dirname(script_path)
 
-if args.list:
-    print "List of tests"
-    # It would be nicer to ask nose2 to give the list of tests...
-    os.chdir("support/testing")
-    for root, dirs, files in os.walk("tests"):
-        for f in files:
-            if os.path.splitext(f)[1] != '.py':
-                continue
-            if f == '__init__.py':
-                continue
-            print "  %s.%s" % (string.replace(root, "/", "."), os.path.splitext(f)[0])
-    sys.exit(0)
+    if args.stdout:
+        BRTest.logtofile = False
 
-if args.download is None:
-    print "Missing download directory, please use -d/--download"
-    sys.exit(1)
+    if args.list:
+        print "List of tests"
+        nose2.discover(argv=[script_path,
+                             "-s", test_dir,
+                             "-v",
+                             "--collect-only"],
+                       plugins=["nose2.plugins.collect"])
+        return 0
 
-BRTest.downloaddir = args.download
+    if args.download is None:
+        print "Missing download directory, please use -d/--download"
+        return 1
 
-if args.output is None:
-    print "Missing output directory, please use -o/--output"
-    sys.exit(1)
+    BRTest.downloaddir = args.download
 
-if not os.path.exists(args.output):
-    print "The selected output directory does not exist"
-    sys.exit(1)
+    if args.output is None:
+        print "Missing output directory, please use -o/--output"
+        return 1
 
-BRTest.outputdir = args.output
+    if not os.path.exists(args.output):
+        print "The selected output directory does not exist"
+        return 1
 
-if args.all is False and len(args.testname) == 0:
-    print "No test selected"
-    sys.exit(1)
+    BRTest.outputdir = args.output
 
-nose2_args = [ "-v", "-s", "support/testing",
-               "-c", "support/testing/conf/unittest.cfg" ]
+    if args.all is False and len(args.testname) == 0:
+        print "No test selected"
+        return 1
 
-if len(args.testname) != 0:
-    nose2_args += args.testname
+    nose2_args = ["-v",
+                  "-s", "support/testing",
+                  "-c", "support/testing/conf/unittest.cfg"]
 
-nose2.discover(argv=nose2_args)
+    if len(args.testname) != 0:
+        nose2_args += args.testname
+
+    nose2.discover(argv=nose2_args)
+
+if __name__ == "__main__":
+    sys.exit(main())
